@@ -9,6 +9,11 @@ import br.com.eds.service.GenericService;
 public abstract class GenericServiceImpl<T extends Serializable> implements GenericService<T> {
 	
 	@Override
+	public T findById(Integer id) {
+		return getDao().findById(id);
+	}
+
+	@Override
 	public List<T> findAll() {
 		return getDao().findAll();
 	}

@@ -6,15 +6,15 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
 import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import br.com.eds.enuns.TipoLancamento;
 import br.com.eds.model.Lancamento;
 import br.com.eds.service.LancamentoService;
 import br.com.eds.util.FacesUtil;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class LancamentoBean implements Serializable {
 
@@ -40,19 +40,25 @@ public class LancamentoBean implements Serializable {
 		lancamentos = service.findAll();
 	}
 	
-	public void inserir() {
-		service.persist(lancamento);
-		FacesUtil.adicionarMensagem(FacesMessage.SEVERITY_INFO, "Lançamento cadastrado com sucesso.");
+	public void gravar() {
+		
+		if(lancamento.getId() == null) {
+			service.persist(lancamento);
+			FacesUtil.adicionarMensagem(FacesMessage.SEVERITY_INFO, "Lançamento cadastrado com sucesso.");
+		} else {
+			service.update(lancamento);
+			FacesUtil.adicionarMensagem(FacesMessage.SEVERITY_INFO, "Lançamento atualizado com sucesso.");
+		}
+		
 		lancamento = new Lancamento();
 		carregarLista();
 	}
 	
-	public void atualizar(Lancamento lancamento) {
-		service.update(lancamento);
-	}
-	
 	public void remover() {
-		
+		service.remove(lancamento);
+		FacesUtil.adicionarMensagem(FacesMessage.SEVERITY_INFO, "Lançamento removido com sucesso.");
+		lancamento = new Lancamento();
+		carregarLista();
 	}
 	
 	public TipoLancamento[] getTiposLancamentos() {

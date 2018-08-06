@@ -12,7 +12,7 @@ import br.com.eds.dao.GenericDao;
 public abstract class GenericDaoImpl<T extends Serializable> implements GenericDao<T> {
 	
 	@PersistenceContext
-	private EntityManager entityManager;
+	private EntityManager em;
 	
 	private Class<T> clazz;
 	
@@ -23,27 +23,27 @@ public abstract class GenericDaoImpl<T extends Serializable> implements GenericD
 	
 	@Override
 	public List<T> findAll() {
-		TypedQuery<T> query = entityManager.createQuery("from " + clazz.getName(), clazz);
+		TypedQuery<T> query = em.createQuery("from " + clazz.getName(), clazz);
 		return query.getResultList();
 	}
 
 	@Override
 	public T findById(Integer id) {
-		return entityManager.find(clazz, id);
+		return em.find(clazz, id);
 	}
 
 	@Override
 	public void persist(T t) {
-		entityManager.persist(t);
+		em.persist(t);
 	}
 	
 	@Override
 	public void update(T t) {
-		entityManager.merge(t);
+		em.merge(t);
 	}
 
 	@Override
 	public void remove(T t) {
-		entityManager.remove(t);
+		em.remove(em.contains(t) ? t : em.merge(t));
 	}
 }

@@ -9,7 +9,7 @@
 		<h:outputStylesheet library="css" name="lancamentos.css" />
 
 		<h:form id="frm">
-		
+
 			<p:growl id="growl" life="5000" />
 
 			<p:panelGrid columns="2" styleClass="form-grid"
@@ -44,19 +44,25 @@
 					value="#{lancamentoBean.lancamento.dataPagamento}" />
 
 				<p:outputLabel />
-				<p:commandButton value="Cadastrar" actionListener="#{lancamentoBean.inserir}"  process="@all" update="frm" />
+				<p:commandButton value="Gravar"
+					actionListener="#{lancamentoBean.gravar}" process="@all"
+					update=":frm :tableForm" />
 			</p:panelGrid>
-			
-			<br />
-			<br />
-			
-			<p:dataTable  id="table" var="lancamento" value="#{lancamentoBean.lancamentos}"
-				width="75%" styleClass="grid" headerClass="cabecalho"
-				rowClasses="cor-sim, cor-nao"
+
+		</h:form>
+
+		<br />
+		<br />
+
+		<h:form id="tableForm">
+
+			<p:dataTable id="table" var="lancamento"
+				value="#{lancamentoBean.lancamentos}" width="75%" styleClass="grid"
+				headerClass="cabecalho" rowClasses="cor-sim, cor-nao"
 				rendered="#{not lancamentoBean.lancamentos.isEmpty()}"
 				columnClasses="tipo, pessoa, descricao, valor, vencimento, pagamento, situacao, acoes">
-				
-				<p:column headerText="Tipo" style="text-align:center" >
+
+				<p:column headerText="Tipo" style="text-align:center">
 					<h:outputText value="#{lancamento.tipo}" />
 				</p:column>
 
@@ -65,20 +71,21 @@
 				</p:column>
 
 				<p:column headerText="Valor" style="text-align:center">
-					<h:outputText value="#{lancamento.valor}" styleClass="#{lancamento.tipo == 'DESPESA' ? 'despesa' : 'receita'}">
-						<f:convertNumber currencySymbol="R$" type="currency"/>
+					<h:outputText value="#{lancamento.valor}"
+						styleClass="#{lancamento.tipo == 'DESPESA' ? 'despesa' : 'receita'}">
+						<f:convertNumber currencySymbol="R$" type="currency" />
 					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Vencimento" style="text-align:center">
 					<h:outputText value="#{lancamento.dataVencimento}">
-						<f:convertDateTime pattern="dd/MM/yyyy"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
 				<p:column headerText="Pagamento" style="text-align:center">
 					<h:outputText value="#{lancamento.dataPagamento}">
-						<f:convertDateTime pattern="dd/MM/yyyy"/>
+						<f:convertDateTime pattern="dd/MM/yyyy" />
 					</h:outputText>
 				</p:column>
 
@@ -86,9 +93,15 @@
 					<h:outputText value="#{lancamento.pago ? 'SIM' : 'NÃO'}" />
 				</p:column>
 
-				<p:column style="text-align:center"> 
-					<h:graphicImage library="imagens" name="editar.png" />
-					<h:graphicImage library="imagens" name="excluir.png" />
+				<p:column style="text-align:center">
+					<p:commandButton update=":frm" ajax="false" icon="ui-icon-pencil">
+						<f:setPropertyActionListener value="#{lancamento}"
+							target="#{lancamentoBean.lancamento}" />
+					</p:commandButton>
+					<p:commandButton update=":frm" ajax="false" icon="ui-icon-trash" action="#{lancamentoBean.remover}">
+						<f:setPropertyActionListener value="#{lancamento}"
+							target="#{lancamentoBean.lancamento}" />
+					</p:commandButton>
 				</p:column>
 			</p:dataTable>
 		</h:form>
