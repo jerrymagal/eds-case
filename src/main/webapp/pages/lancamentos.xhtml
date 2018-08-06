@@ -1,0 +1,97 @@
+<ui:composition template="../layoutPadrao.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="conteudo">
+		<h:outputStylesheet library="css" name="lancamentos.css" />
+
+		<h:form id="frm">
+		
+			<p:growl id="growl" life="5000" />
+
+			<p:panelGrid columns="2" styleClass="form-grid"
+				columnClasses="label, campo">
+
+				<p:outputLabel value="Tipo" />
+				<p:selectOneRadio value="#{lancamentoBean.lancamento.tipo}">
+					<f:selectItems value="#{lancamentoBean.tiposLancamentos}"
+						var="tipo" itemLabel="#{tipo.name()}" itemValue="#{tipo}" />
+				</p:selectOneRadio>
+
+				<p:outputLabel value="Descrição" />
+				<p:inputText size="60"
+					value="#{lancamentoBean.lancamento.descricao}" />
+
+				<p:outputLabel value="Valor" />
+				<p:inputNumber decimalSeparator="," thousandSeparator="."
+					value="#{lancamentoBean.lancamento.valor}" />
+
+				<p:outputLabel value="Data de vencimento" />
+				<p:calendar locale="pt_BR"
+					value="#{lancamentoBean.lancamento.dataVencimento}" />
+
+				<p:outputLabel />
+				<h:panelGroup>
+					<p:selectBooleanCheckbox value="#{lancamentoBean.lancamento.pago}" />
+					<p:outputLabel value="Conta paga" />
+				</h:panelGroup>
+
+				<p:outputLabel value="Data de pagamento" />
+				<p:calendar locale="pt_BR"
+					value="#{lancamentoBean.lancamento.dataPagamento}" />
+
+				<p:outputLabel />
+				<p:commandButton value="Cadastrar" actionListener="#{lancamentoBean.inserir}"  process="@all" update="frm" />
+			</p:panelGrid>
+			
+			<br />
+			<br />
+			
+			<p:dataTable  id="table" var="lancamento" value="#{lancamentoBean.lancamentos}"
+				width="75%" styleClass="grid" headerClass="cabecalho"
+				rowClasses="cor-sim, cor-nao"
+				rendered="#{not lancamentoBean.lancamentos.isEmpty()}"
+				columnClasses="tipo, pessoa, descricao, valor, vencimento, pagamento, situacao, acoes">
+				
+				<p:column headerText="Tipo" style="text-align:center" >
+					<h:outputText value="#{lancamento.tipo}" />
+				</p:column>
+
+				<p:column headerText="Descrição" style="text-align:center">
+					<h:outputText value="#{lancamento.descricao}" />
+				</p:column>
+
+				<p:column headerText="Valor" style="text-align:center">
+					<h:outputText value="#{lancamento.valor}" styleClass="#{lancamento.tipo == 'DESPESA' ? 'despesa' : 'receita'}">
+						<f:convertNumber currencySymbol="R$" type="currency"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Vencimento" style="text-align:center">
+					<h:outputText value="#{lancamento.dataVencimento}">
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Pagamento" style="text-align:center">
+					<h:outputText value="#{lancamento.dataPagamento}">
+						<f:convertDateTime pattern="dd/MM/yyyy"/>
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Situação" style="text-align:center">
+					<h:outputText value="#{lancamento.pago ? 'SIM' : 'NÃO'}" />
+				</p:column>
+
+				<p:column style="text-align:center"> 
+					<h:graphicImage library="imagens" name="editar.png" />
+					<h:graphicImage library="imagens" name="excluir.png" />
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
